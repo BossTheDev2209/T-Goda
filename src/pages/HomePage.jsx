@@ -4,9 +4,9 @@ import Footer from '../components/Footer'
 import beachImg from '../assets/beach.png'
 import thaiTempleImg from '../assets/thai-temple.png'
 import tokyoImg from '../assets/japan-tokyo.png'
-import poolImg from '../../information/pool.png'
-import parisImg from '../../information/paris.png'
-import londonImg from '../../information/london.png'
+import poolImg from '../assets/pool.png'
+import parisImg from '../assets/paris.png'
+import londonImg from '../assets/london.png'
 
 // Destination city cards data
 const destinations = [
