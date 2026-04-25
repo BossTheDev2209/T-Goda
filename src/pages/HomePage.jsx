@@ -1,4 +1,8 @@
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { format } from 'date-fns'
+import { Calendar } from "../components/ui/calendar"
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import beachImg from '../assets/beach.png'
@@ -42,115 +46,211 @@ const destinations = [
 
 export default function HomePage() {
   const navigate = useNavigate()
+  
+  // Date range state
+  const [date, setDate] = useState({
+    from: new Date(2026, 9, 12),
+    to: new Date(2026, 9, 18),
+  })
+  const [showCalendar, setShowCalendar] = useState(false)
+  const calendarRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+        setShowCalendar(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
 
-      {/* ── HERO SECTION ── */}
-      <section className="relative h-[420px] sm:h-[480px] overflow-hidden">
-        {/* Background image */}
-        <img
-          src={beachImg}
-          alt="Tropical paradise beach"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
+      {/* ── HERO SECTION - Exact Layout Specs ── */}
+      <section className="relative px-4 sm:px-6 lg:px-8 mt-[40px] z-10">
+        <div 
+          className="mx-auto relative"
+          style={{
+            width: '1200px',
+            height: '520px',
+            minHeight: '520px',
+            borderRadius: '16px',
+          }}
+        >
+          {/* Background Layer (clipping only the image) */}
+          <div className="absolute inset-0 overflow-hidden" style={{ borderRadius: '16px' }}>
+            {/* Background image */}
+            <img
+              src={beachImg}
+              alt="Tropical paradise beach"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-black/30" />
+          </div>
 
-        {/* Hero content */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-          {/* Exact Figma: 60px, 800, -1.5px tracking, 60px line-height */}
-          <h1 style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 800,
-            fontSize: '60px',
-            lineHeight: '60px',
-            letterSpacing: '-1.5px',
-            textAlign: 'center',
-          }} className="text-white max-w-3xl">
-            Escape to Your Perfect<br/>Paradise
-          </h1>
-          <p className="mt-5 text-white max-w-2xl text-center" style={{
-            fontFamily: "'Plus Jakarta Sans', sans-serif",
-            fontWeight: 500,
-            fontSize: '20px',
-            lineHeight: '28px',
-            letterSpacing: '0px',
-          }}>
-            Unlock exclusive prices on over 2 million properties and flights across<br/>the globe.
-          </p>
+          {/* Hero Content */}
+          <div className="relative z-20 h-full flex flex-col items-center text-center" style={{ padding: '114px 16px' }}>
+            <h1 style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontWeight: 800,
+              fontSize: '60px',
+              lineHeight: '60px',
+              letterSpacing: '-1.5px',
+            }} className="text-white max-w-4xl">
+              Escape to Your Perfect<br/>Paradise
+            </h1>
+            <p className="mt-6 text-white max-w-2xl" style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontWeight: 500,
+              fontSize: '18px',
+              lineHeight: '26px',
+            }}>
+              Unlock exclusive prices on over 2 million properties and flights across the globe.
+            </p>
 
-          {/* Search bar — precise Figma specs */}
-          <div 
-            className="mt-8 w-full flex flex-row items-center shadow-xl"
-            style={{
-              width: '768px',
-              height: '68px',
-              backgroundColor: '#FFFFFF',
-              borderRadius: '12px',
-              padding: '8px',
-              gap: '8px',
-            }}
-          >
-            {/* Destination Box (Image 2) */}
+            {/* Search bar — precise Figma specs */}
             <div 
-              className="flex items-center gap-2.5 px-3"
+              className="mt-6 w-full flex flex-row items-center shadow-xl"
               style={{
-                width: '292.29px',
-                height: '52px',
-                backgroundColor: '#E9E9E9',
-                border: '1px solid #6B7FC6',
-                borderRadius: '8px',
+                width: '768px',
+                height: '68px',
+                backgroundColor: '#FFFFFF',
+                borderRadius: '12px',
+                padding: '8px',
+                gap: '8px',
               }}
             >
-              <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 flex-shrink-0">
-                <path d="M10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C12.4333 0 14.5625 0.7625 16.3875 2.2875C18.2125 3.8125 19.35 5.725 19.8 8.025H17.75C17.4333 6.80833 16.8625 5.72083 16.0375 4.7625C15.2125 3.80417 14.2 3.08333 13 2.6V3C13 3.55 12.8042 4.02083 12.4125 4.4125C12.0208 4.80417 11.55 5 11 5H9V7C9 7.28333 8.90417 7.52083 8.7125 7.7125C8.52083 7.90417 8.28333 8 8 8H6V10H8V13H7L2.2 8.2C2.15 8.5 2.10417 8.8 2.0625 9.1C2.02083 9.4 2 9.7 2 10C2 12.1833 2.76667 14.0583 4.3 15.625C5.83333 17.1917 7.73333 17.9833 10 18V20ZM19.1 19.5L15.9 16.3C15.55 16.5 15.175 16.6667 14.775 16.8C14.375 16.9333 13.95 17 13.5 17C12.25 17 11.1875 16.5625 10.3125 15.6875C9.4375 14.8125 9 13.75 9 12.5C9 11.25 9.4375 10.1875 10.3125 9.3125C11.1875 8.4375 12.25 8 13.5 8C14.75 8 15.8125 8.4375 16.6875 9.3125C17.5625 10.1875 18 11.25 18 12.5C18 12.95 17.9333 13.375 17.8 13.775C17.6667 14.175 17.5 14.55 17.3 14.9L20.5 18.1L19.1 19.5ZM13.5 15C14.2 15 14.7917 14.7583 15.275 14.275C15.7583 13.7917 16 13.2 16 12.5C16 11.8 15.7583 11.2083 15.275 10.725C14.7917 10.2417 14.2 10 13.5 10C12.8 10 12.2083 10.2417 11.725 10.725C11.2417 11.2083 11 11.8 11 12.5C11 13.2 11.2417 13.7917 11.725 14.275C12.2083 14.7583 12.8 15 13.5 15Z" fill="#727784"/>
-              </svg>
-              <input
-                type="text"
-                placeholder="Where to next?"
-                className="flex-1 text-[15px] text-gray-800 placeholder-[#727784] outline-none bg-transparent font-medium min-w-0"
-              />
-            </div>
+              {/* Destination Box (Image 2) */}
+              <div 
+                className="flex items-center gap-2.5 px-3"
+                style={{
+                  width: '292.29px',
+                  height: '52px',
+                  backgroundColor: '#E9E9E9',
+                  border: '1px solid #6B7FC6',
+                  borderRadius: '8px',
+                }}
+              >
+                <svg width="21" height="20" viewBox="0 0 21 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 flex-shrink-0">
+                  <path d="M10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C12.4333 0 14.5625 0.7625 16.3875 2.2875C18.2125 3.8125 19.35 5.725 19.8 8.025H17.75C17.4333 6.80833 16.8625 5.72083 16.0375 4.7625C15.2125 3.80417 14.2 3.08333 13 2.6V3C13 3.55 12.8042 4.02083 12.4125 4.4125C12.0208 4.80417 11.55 5 11 5H9V7C9 7.28333 8.90417 7.52083 8.7125 7.7125C8.52083 7.90417 8.28333 8 8 8H6V10H8V13H7L2.2 8.2C2.15 8.5 2.10417 8.8 2.0625 9.1C2.02083 9.4 2 9.7 2 10C2 12.1833 2.76667 14.0583 4.3 15.625C5.83333 17.1917 7.73333 17.9833 10 18V20ZM19.1 19.5L15.9 16.3C15.55 16.5 15.175 16.6667 14.775 16.8C14.375 16.9333 13.95 17 13.5 17C12.25 17 11.1875 16.5625 10.3125 15.6875C9.4375 14.8125 9 13.75 9 12.5C9 11.25 9.4375 10.1875 10.3125 9.3125C11.1875 8.4375 12.25 8 13.5 8C14.75 8 15.8125 8.4375 16.6875 9.3125C17.5625 10.1875 18 11.25 18 12.5C18 12.95 17.9333 13.375 17.8 13.775C17.6667 14.175 17.5 14.55 17.3 14.9L20.5 18.1L19.1 19.5ZM13.5 15C14.2 15 14.7917 14.7583 15.275 14.275C15.7583 13.7917 16 13.2 16 12.5C16 11.8 15.7583 11.2083 15.275 10.725C14.7917 10.2417 14.2 10 13.5 10C12.8 10 12.2083 10.2417 11.725 10.725C11.2417 11.2083 11 11.8 11 12.5C11 13.2 11.2417 13.7917 11.725 14.275C12.2083 14.7583 12.8 15 13.5 15Z" fill="#727784"/>
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Where to next?"
+                  className="bg-transparent border-none focus:outline-none w-full text-[15px] font-medium"
+                  style={{ color: '#191C22' }}
+                />
+              </div>
 
-            {/* Date Box (Image 3) */}
-            <div 
-              className="flex items-center gap-2.5 px-3"
-              style={{
-                width: '292.29px',
-                height: '52px',
-                backgroundColor: '#E9E9E9',
-                border: '1px solid #6B7FC6',
-                borderRadius: '8px',
-              }}
-            >
-              <svg className="w-5 h-5 flex-shrink-0 text-[#727784]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
-              <span className="text-[15px] font-medium whitespace-nowrap" style={{ color: '#191C22' }}>Oct 12 – Oct 18</span>
-            </div>
+              {/* Date Box — Interactive Calendar */}
+              <div className="relative" ref={calendarRef}>
+                <div 
+                  onClick={() => setShowCalendar(!showCalendar)}
+                  className="flex items-center gap-2.5 px-3 cursor-pointer select-none"
+                  style={{
+                    width: '292.29px',
+                    height: '52px',
+                    backgroundColor: '#E9E9E9',
+                    border: showCalendar ? '1.5px solid #005CBD' : '1px solid #6B7FC6',
+                    borderRadius: '8px',
+                    transition: 'border-color 0.2s ease',
+                  }}
+                >
+                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke={showCalendar ? '#005CBD' : '#727784'} strokeWidth="2" viewBox="0 0 24 24" style={{ transition: 'stroke 0.2s ease' }}>
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                  <span className="text-[15px] font-medium whitespace-nowrap" style={{ color: '#191C22' }}>
+                    {date?.from ? (
+                      date.to ? (
+                        <>
+                          {format(date.from, "MMM dd")} – {format(date.to, "MMM dd, yyyy")}
+                        </>
+                      ) : (
+                        format(date.from, "MMM dd, yyyy")
+                      )
+                    ) : (
+                      "Oct 12 – Oct 18, 2026"
+                    )}
+                  </span>
+                </div>
 
-            {/* Search Button (Image 4) */}
-            <button
-              onClick={() => navigate('/search')}
-              className="flex items-center justify-center gap-2 text-white transition-opacity hover:opacity-90 flex-shrink-0"
-              style={{ 
-                width: '151.42px',
-                height: '52px',
-                backgroundColor: '#005CBD',
-                borderRadius: '8px',
-                padding: '12px 32px',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                fontWeight: 700,
-                fontSize: '15px',
-              }}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-              </svg>
-              Search
-            </button>
+                {/* Calendar Popover */}
+                <AnimatePresence>
+                  {showCalendar && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="absolute top-full left-0 mt-2 z-[9999] bg-white border border-gray-200 rounded-2xl overflow-hidden"
+                      style={{ boxShadow: '0 25px 60px -12px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,0,0,0.05)' }}
+                    >
+                      <Calendar
+                        mode="range"
+                        captionLayout="dropdown"
+                        startMonth={new Date(2020, 0)}
+                        endMonth={new Date(2035, 11)}
+                        defaultMonth={date?.from}
+                        selected={date}
+                        onSelect={(newRange) => {
+                          setDate(newRange)
+                          if (newRange?.from && newRange?.to) {
+                            setTimeout(() => setShowCalendar(false), 400)
+                          }
+                        }}
+                        numberOfMonths={1}
+                      />
+                      {/* Selection feedback */}
+                      <div style={{
+                        borderTop: '1px solid #e5e7eb',
+                        padding: '8px 16px',
+                        fontSize: '12px',
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        color: '#727784',
+                        textAlign: 'center',
+                      }}>
+                        {date?.from && date?.to ? (
+                          <span style={{ color: '#005CBD', fontWeight: 600 }}>
+                            ✓ {format(date.from, "MMM dd, yyyy")} → {format(date.to, "MMM dd, yyyy")}
+                          </span>
+                        ) : date?.from ? (
+                          <span>Select end date...</span>
+                        ) : (
+                          <span>Select start date</span>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Search Button (Image 4) */}
+              <motion.button
+                onClick={() => navigate('/search')}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center gap-2 text-white transition-opacity hover:opacity-90 flex-shrink-0"
+                style={{ 
+                  width: '151.42px',
+                  height: '52px',
+                  backgroundColor: '#005CBD',
+                  borderRadius: '8px',
+                  padding: '12px 32px',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontWeight: 700,
+                  fontSize: '15px',
+                }}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                Search
+              </motion.button>
+            </div>
           </div>
         </div>
       </section>
@@ -161,7 +261,7 @@ export default function HomePage() {
           {/* Best Price Guarantee */}
           <div className="rounded-2xl p-6 flex flex-col items-center text-center" style={{ backgroundColor: '#E9E9E9' }}>
             <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: '#5392F933' }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-tag-icon lucide-tag w-6 h-6 text-[#005CBD]"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-tag-icon lucide-tag w-6 h-6 text-[#005CBD]"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>
             </div>
             <h3 className="text-gray-900" style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -262,13 +362,20 @@ export default function HomePage() {
                 letterSpacing: '0px',
               }}>Handpicked favorites for your next adventure</p>
             </div>
-            <button className="text-[#005CBD] hover:underline" style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontWeight: 700,
-              fontSize: '16px',
-              lineHeight: '24px',
-              letterSpacing: '0px',
-            }}>View all</button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-[#005CBD] hover:underline"
+              style={{
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                fontWeight: 700,
+                fontSize: '16px',
+                lineHeight: '24px',
+                letterSpacing: '0px',
+              }}
+            >
+              View all
+            </motion.button>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -369,37 +476,51 @@ export default function HomePage() {
                 Exclusive member deals on flights and luxury hotels for your next summer getaway. Valid until Oct 31st.
               </p>
               <div className="flex flex-row gap-3 mt-8">
-                <button className="px-6 py-3 rounded-xl bg-white hover:bg-gray-50 transition-colors" style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '18px',
-                  lineHeight: '28px',
-                  letterSpacing: '0px',
-                  color: '#B61B4A',
-                }}>
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-3 rounded-xl bg-white hover:bg-gray-50 transition-colors" 
+                  style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '18px',
+                    lineHeight: '28px',
+                    letterSpacing: '0px',
+                    color: '#B61B4A',
+                  }}
+                >
                   Explore Deals
-                </button>
-                <button className="px-6 py-3 rounded-xl border-2 border-white text-white hover:bg-white/10 transition-colors" style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '18px',
-                  lineHeight: '28px',
-                  letterSpacing: '0px',
-                }}>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-3 rounded-xl border-2 border-white text-white hover:bg-white/10 transition-colors" 
+                  style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '18px',
+                    lineHeight: '28px',
+                    letterSpacing: '0px',
+                  }}
+                >
                   Join Club T-Goda
-                </button>
+                </motion.button>
               </div>
             </div>
 
-            {/* Image — right side only, fills height */}
+            {/* Image — zoomed and cropped to hide white corners in the source file */}
             <div
-              className="relative z-10 flex-shrink-0 overflow-hidden shadow-xl"
-              style={{ width: '336px', height: '336px' }}
+              className="flex-shrink-0 overflow-hidden rotate-[3deg]"
+              style={{ 
+                width: '336px', 
+                height: '336px',
+                borderRadius: '24px'
+              }}
             >
               <img
                 src={poolImg}
                 alt="Luxury pool"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover scale-110"
               />
             </div>
           </div>
@@ -465,7 +586,9 @@ export default function HomePage() {
               />
             </div>
             {/* Subscribe Button Box (Image 2) */}
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className="text-white transition-opacity hover:opacity-90 flex items-center justify-center"
               style={{ 
                 backgroundColor: '#005CBD',
@@ -480,7 +603,7 @@ export default function HomePage() {
               }}
             >
               Subscribe Now
-            </button>
+            </motion.button>
           </div>
           <p className="mt-4 mx-auto whitespace-nowrap" style={{
             fontFamily: "'Plus Jakarta Sans', sans-serif",
