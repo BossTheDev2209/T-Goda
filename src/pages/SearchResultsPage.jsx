@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
+// Import assets
+import mandalaImg from '../assets/Mandala_Sky_Luxury_Villas.png'
+import emeraldImg from '../assets/Emerald_Jungle_Retreat.png'
+import seminyakImg from '../assets/Seminyak_Shores_Club.png'
+import azureImg from '../assets/The_Azure_serenity_Resort.png'
+import luminaImg from '../assets/Lumina_Beach_Villas.png'
+import palmsImg from '../assets/palmsanchuary.png'
+import mapImg from '../assets/map.png'
+
 const flashDeals = [
   {
     id: 1,
@@ -12,7 +21,7 @@ const flashDeals = [
     originalPrice: 1200,
     discountedPrice: 480,
     discount: 60,
-    img: '/src/assets/Mandala_Sky_Luxury_Villas.png',
+    img: mandalaImg,
   },
   {
     id: 2,
@@ -22,7 +31,7 @@ const flashDeals = [
     originalPrice: 450,
     discountedPrice: 247,
     discount: 45,
-    img: '/src/assets/Emerald_Jungle_Retreat.png',
+    img: emeraldImg,
   },
   {
     id: 3,
@@ -32,7 +41,7 @@ const flashDeals = [
     originalPrice: 680,
     discountedPrice: 442,
     discount: 35,
-    img: '/src/assets/Seminyak_Shores_Club.png',
+    img: seminyakImg,
   },
 ]
 
@@ -50,7 +59,7 @@ const regularHotels = [
     tags: ['Free Wi-Fi', 'Pool', 'Breakfast'],
     badge: 'Top Choice',
     message: 'Only 2 rooms left at this price!',
-    img: '/src/assets/The_Azure_Serenity_Resort.png',
+    img: azureImg,
   },
   {
     id: 5,
@@ -63,7 +72,7 @@ const regularHotels = [
     price: 415,
     tags: ['Private Beach', 'Spa'],
     message: 'Free cancellation before Oct 10',
-    img: '/src/assets/Lumina_Beach_Villas.png',
+    img: luminaImg,
   },
   {
     id: 6,
@@ -76,7 +85,7 @@ const regularHotels = [
     price: 189,
     tags: ['Airport Shuttle', 'Gym'],
     message: 'Breakfast + Dinner deal available',
-    img: '/src/assets/palmsanchuary.png',
+    img: palmsImg,
   },
 ]
 
@@ -310,7 +319,7 @@ export default function HotelDetailPage() {
 
           {/* Map Section */}
           <div className="relative rounded-2xl overflow-hidden h-44 shadow-sm border border-gray-100 group cursor-pointer">
-            <img src="/src/assets/map.png" alt="Map" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+            <img src={mapImg} alt="Map" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
           </div>
         </aside>
 
