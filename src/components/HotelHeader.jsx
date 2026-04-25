@@ -20,7 +20,7 @@ export default function HotelHeader() {
             ))}
           </div>
           <span className="bg-[#2563EB] text-white px-2 py-1 rounded-md text-xs font-bold uppercase">
-            REORT
+            RESORT
           </span>
         </div>
 

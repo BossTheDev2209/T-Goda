@@ -25,10 +25,7 @@ export default function HotelDetailPage() {
         {...pageTransition}
         className="flex-1 max-w-7xl mx-auto w-full px-4 py-6"
       >
-        {/* Breadcrumbs */}
-        <nav className="text-sm text-[#64748B] mb-6">
-          Home <span className="mx-1">&gt;</span> Greece <span className="mx-1">&gt;</span> Crete Hotels <span className="mx-1">&gt;</span> <span className="font-semibold text-[#191C22]">Grand Azure Resort &amp; Spa</span>
-        </nav>
+
 
         {/* 1. ส่วนหัวโรงแรม (ชื่อ, ดาว, ปุ่ม Share/Book) */}
         <HotelHeader />

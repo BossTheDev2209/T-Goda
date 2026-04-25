@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:clean": "Remove-Item -Recurse -Force node_modules/.vite -ErrorAction SilentlyContinue; vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -15,6 +16,7 @@
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.11.0",
     "react": "^19.2.5",
+    "react-datepicker": "^9.1.0",
     "react-day-picker": "^9.14.0",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",
